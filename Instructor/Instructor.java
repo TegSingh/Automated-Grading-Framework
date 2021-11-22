@@ -49,4 +49,8 @@ public class Instructor {
         this.course_code = course_code;
     }
 
+    public String toString() {
+        return "Instructor ID: " + this.id + " Name: " + this.name + " Course code: " + this.course_code;
+    }
+
 }

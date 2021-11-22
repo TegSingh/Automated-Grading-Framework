@@ -2,11 +2,6 @@ package Client;
 
 import java.io.*;
 import java.util.*;
-
-import javax.sql.rowset.CachedRowSet;
-
-import Student.Student;
-
 import java.net.*;
 
 public class Client {

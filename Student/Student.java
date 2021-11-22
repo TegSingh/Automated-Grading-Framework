@@ -10,7 +10,7 @@ public class Student {
     int instructor_id;
 
     // Define the constructor
-    public Student(int id, String password, String name, double grade, int instructor_id, String course_code) {
+    public Student(int id, String password, String name, double grade, int instructor_id) {
         this.id = id;
         this.password = password;
         this.name = name;
@@ -59,4 +59,9 @@ public class Student {
         this.instructor_id = instructor_id;
     }
 
+    // Set the to string method
+    public String toString() {
+        return "Student ID: " + this.id + " Name: " + this.name + " Grade: " + this.grade + " Instructor: "
+                + this.instructor_id;
+    }
 }
