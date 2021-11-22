@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 
 public class Server {
+
     public static void main(String[] args) {
         ServerSocket server = null;
         try {

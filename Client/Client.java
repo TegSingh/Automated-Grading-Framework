@@ -2,11 +2,17 @@ package Client;
 
 import java.io.*;
 import java.util.*;
+
+import javax.sql.rowset.CachedRowSet;
+
+import Student.Student;
+
 import java.net.*;
 
 public class Client {
 
     public static void main(String[] args) {
+
         // Socket active on port 3000
         try (Socket socket = new Socket("localhost", 3000)) {
 

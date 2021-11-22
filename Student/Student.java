@@ -7,13 +7,15 @@ public class Student {
     String password;
     String name;
     double grade;
+    int instructor_id;
 
     // Define the constructor
-    public Student(int id, String password, String name, double grade) {
+    public Student(int id, String password, String name, double grade, int instructor_id, String course_code) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.grade = grade;
+        this.instructor_id = instructor_id;
     }
 
     // Define getter and setters
@@ -48,4 +50,13 @@ public class Student {
     public void set_grade(double grade) {
         this.grade = grade;
     }
+
+    public int get_instructor_id() {
+        return this.instructor_id;
+    }
+
+    public void set_instructor_id(int instructor_id) {
+        this.instructor_id = instructor_id;
+    }
+
 }

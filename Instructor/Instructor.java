@@ -6,12 +6,14 @@ public class Instructor {
     int id;
     String password;
     String name;
+    String course_code;
 
     // Define the constructor
-    public Instructor(int id, String password, String name) {
+    public Instructor(int id, String password, String name, String course_code) {
         this.id = id;
         this.password = password;
         this.name = name;
+        this.course_code = course_code;
     }
 
     // Define getter and setters
@@ -37,6 +39,14 @@ public class Instructor {
 
     public void set_name(String name) {
         this.name = name;
+    }
+
+    public String get_course_code() {
+        return this.course_code;
+    }
+
+    public void set_course_code(String course_code) {
+        this.course_code = course_code;
     }
 
 }
