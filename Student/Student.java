@@ -8,14 +8,16 @@ public class Student {
     String name;
     double grade;
     int instructor_id;
+    boolean logged_in;
 
     // Define the constructor
-    public Student(int id, String password, String name, double grade, int instructor_id) {
+    public Student(int id, String password, String name, double grade, int instructor_id, boolean logged_in) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.grade = grade;
         this.instructor_id = instructor_id;
+        this.logged_in = logged_in;
     }
 
     // Define getter and setters
@@ -59,9 +61,17 @@ public class Student {
         this.instructor_id = instructor_id;
     }
 
+    public boolean is_logged_in() {
+        return this.logged_in;
+    }
+
+    public void set_logged_in(boolean logged_in) {
+        this.logged_in = logged_in;
+    }
+
     // Set the to string method
     public String toString() {
         return "Student ID: " + this.id + " Name: " + this.name + " Grade: " + this.grade + " Instructor: "
-                + this.instructor_id;
+                + this.instructor_id + " Logged in: " + logged_in;
     }
 }

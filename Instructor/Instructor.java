@@ -7,13 +7,15 @@ public class Instructor {
     String password;
     String name;
     String course_code;
+    boolean logged_in;
 
     // Define the constructor
-    public Instructor(int id, String password, String name, String course_code) {
+    public Instructor(int id, String password, String name, String course_code, boolean logged_in) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.course_code = course_code;
+        this.logged_in = logged_in;
     }
 
     // Define getter and setters
@@ -49,8 +51,17 @@ public class Instructor {
         this.course_code = course_code;
     }
 
+    public boolean is_logged_in() {
+        return this.logged_in;
+    }
+
+    public void set_logged_in(boolean logged_in) {
+        this.logged_in = logged_in;
+    }
+
     public String toString() {
-        return "Instructor ID: " + this.id + " Name: " + this.name + " Course code: " + this.course_code;
+        return "Instructor ID: " + this.id + " Name: " + this.name + " Course code: " + this.course_code
+                + " Logged in: " + logged_in;
     }
 
 }

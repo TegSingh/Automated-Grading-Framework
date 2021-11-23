@@ -1,6 +1,7 @@
 # Automated Grading Framework: 
 
 ## Features: 
+1. User login and privacy: Uses ID and password assigned during signup
 
 ## Instructions: 
 
