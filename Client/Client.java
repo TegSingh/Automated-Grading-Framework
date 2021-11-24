@@ -93,7 +93,7 @@ public class Client {
 
             String line = "";
             boolean first_client_menu_flag = false;
-
+            String input = "";
             // Begin the main loop following login
             if (student_flag) {
                 while (!first_client_menu_flag && !line.equalsIgnoreCase("exit")) {
@@ -114,10 +114,6 @@ public class Client {
                     case "3":
                         System.out.println("Student chose to log out and exit");
                         out.println("Log out");
-                        break;
-                    case "exit":
-                        out.println("Exit");
-                        System.out.println("Goodbye. You will automatically be logged out");
                         return;
                     default:
                         System.out.println("Invalid input please try again");
@@ -145,10 +141,6 @@ public class Client {
                     case "3":
                         System.out.println("Instructor chose to log out and exit");
                         out.println("Log out");
-                        break;
-                    case "exit":
-                        System.out.println("Goodbye. You will automatically be logged out");
-                        out.println("Exit");
                         return;
                     default:
                         System.out.println("Invalid input please try again");
@@ -178,6 +170,7 @@ public class Client {
         System.out.println("Make a selection");
         System.out.println("1. Check pending assignments");
         System.out.println("2. Submit an assignment");
+        System.out.println("3. Log out");
         System.out.println("Enter exit to terminate process");
         System.out.println("Enter choice: ");
     }
@@ -187,8 +180,7 @@ public class Client {
         System.out.println("Make a selection");
         System.out.println("1. Post an assignment");
         System.out.println("2. Review submissions");
-        // Manual Review - Download student submission file
-        // Automatic grading - GRADING CORE
+        System.out.println("3. Log out");
         System.out.println("Enter exit to terminate process");
         System.out.println("Enter Choice: ");
     }

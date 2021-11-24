@@ -74,4 +74,10 @@ public class Student {
         return "Student ID: " + this.id + " Name: " + this.name + " Grade: " + this.grade + " Instructor: "
                 + this.instructor_id + " Logged in: " + logged_in;
     }
+
+    // To string method for file writing
+    public String toStringFile() {
+        return this.id + ", " + this.password + ", " + this.name + ", " + this.grade + ", " + this.instructor_id + ", "
+                + this.logged_in;
+    }
 }

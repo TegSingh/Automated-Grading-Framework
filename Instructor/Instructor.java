@@ -64,4 +64,9 @@ public class Instructor {
                 + " Logged in: " + logged_in;
     }
 
+    // To string method for file writing
+    public String toStringFile() {
+        return this.id + ", " + this.password + ", " + this.name + ", " + this.course_code + ", " + this.logged_in;
+    }
+
 }

@@ -65,7 +65,7 @@ public class Server {
                     String name = data_substrings[2];
                     double grade = Double.parseDouble(data_substrings[3]);
                     int instructor_id = Integer.parseInt(data_substrings[4]);
-                    boolean logged_in = data_substrings[4].equals("true") ? true : false;
+                    boolean logged_in = data_substrings[5].equals("true") ? true : false;
 
                     // Create a student object and add it to the arraylist
                     Student student = new Student(id, password, name, grade, instructor_id, logged_in);
@@ -228,6 +228,65 @@ public class Server {
             }
         }
 
+        // Method to print the list of students
+        public void display_student_list() {
+            for (Student student : students) {
+                System.out.println(student.toString());
+            }
+        }
+
+        // Method to print the list of instructors
+        public void display_instructor_list() {
+            for (Instructor instructor : instructors) {
+                System.out.println(instructor.toString());
+            }
+        }
+
+        // Method to display the IDs of the logged in clients
+        public void display_logged_in_clients() {
+            System.out.print("Student IDs: ");
+            for (Student student : students) {
+                if (student.is_logged_in()) {
+                    System.out.print(student.get_id() + ", ");
+                }
+            }
+            System.out.println();
+            System.out.print("Instructor IDs: ");
+            for (Instructor instructor : instructors) {
+                if (instructor.is_logged_in()) {
+                    System.out.print(instructor.get_id() + ", ");
+                }
+            }
+            System.out.println();
+
+        }
+
+        // Method to write change to database file
+        public void write_change_to_database_file(int type) {
+            if (type == 1) {
+                try {
+                    FileWriter database_file = new FileWriter("Server/student_list.txt", false);
+                    for (Student student : students) {
+                        database_file.write(student.toStringFile() + "\n");
+                    }
+                    database_file.close();
+                } catch (Exception e) {
+                    System.out.println("Error opening file");
+                }
+            } else if (type == 2) {
+                try {
+                    FileWriter database_file = new FileWriter("Server/instructor_list.txt", false);
+                    for (Instructor instructor : instructors) {
+                        database_file.write(instructor.toStringFile() + "\n");
+                    }
+                    database_file.close();
+                } catch (Exception e) {
+                    System.out.println("Error opening file");
+                }
+            }
+
+        }
+
         // Override the runnable run() method
         public void run() {
             PrintWriter out = null;
@@ -271,9 +330,11 @@ public class Server {
 
                                 // Set the student in arraylist as logged in and set the client handler ID
                                 find_student_in_string(validated_student_id).set_logged_in(true);
-                                logged_in_student = find_student_in_string(validated_student_id);
+                                write_change_to_database_file(1);
 
+                                logged_in_student = find_student_in_string(validated_student_id);
                                 out.println("Login successful");
+
                                 // Set the flag to end the login activity loop
                                 login_flag = true;
                             }
@@ -294,6 +355,8 @@ public class Server {
 
                                 // Set the instructor arraylist value to logged in and set the Client Handler ID
                                 find_instructor_in_string(validated_instructor_id).set_logged_in(true);
+                                write_change_to_database_file(2);
+
                                 logged_in_instructor = find_instructor_in_string(validated_instructor_id);
                                 out.println("Login successful");
 
@@ -305,6 +368,14 @@ public class Server {
                     } catch (NullPointerException e) {
                         // This is to handle an unexpected potential ctrl C termination of the client
                         System.out.println("Client unexpectedly terminated");
+                        if (logged_in_student != null) {
+                            find_student_in_string(logged_in_student.get_id()).set_logged_in(false);
+                            write_change_to_database_file(1);
+                        }
+                        if (logged_in_instructor != null) {
+                            find_instructor_in_string(logged_in_instructor.get_id()).set_logged_in(false);
+                            write_change_to_database_file(2);
+                        }
                         break;
                     }
                 }
@@ -332,14 +403,12 @@ public class Server {
                         case "Make submissions":
                             System.out.println(
                                     "Student " + logged_in_student.get_id() + ": Requested to submit an assignment");
-                            String input_make_submissions = client_input;
                             break;
 
                         // Student requested a list a pending assignment
                         case "Check pending assignments":
                             System.out.println("Student " + logged_in_student.get_id()
                                     + ": Requested to check pending assignments");
-                            String input_pending_assignments = client_input;
                             break;
 
                         // Instructor request posting assignment
@@ -347,38 +416,28 @@ public class Server {
                             System.out.println("Instructor " + logged_in_instructor.get_id()
                                     + ": Requested to post an assignment for course: "
                                     + logged_in_instructor.get_course_code());
-                            String input_post_assignment = client_input;
                             break;
 
                         // Instructor request reviewing submissions - Autograding, manual review file
                         case "Review submissions":
                             System.out.println("Instructor " + logged_in_instructor.get_id()
                                     + ": Requested to review student submissions");
-                            String input_review_submissions = client_input;
                             break;
 
                         // Instructor or Student request Log out
                         case "Log out":
                             if (logged_in_student != null) {
                                 System.out.println("Student " + logged_in_student.get_id() + ": Logging out");
+                                find_student_in_string(logged_in_student.get_id()).set_logged_in(false);
+                                write_change_to_database_file(1);
                             }
                             if (logged_in_instructor != null) {
                                 System.out.println("Instructor " + logged_in_instructor.get_id() + ": Logging out");
+                                find_instructor_in_string(logged_in_instructor.get_id()).set_logged_in(false);
+                                write_change_to_database_file(2);
                             }
-                            String input_log_out = client_input;
                             break;
 
-                        // Client requests exit
-                        case "Exit":
-                            if (logged_in_student != null) {
-                                System.out.println("Student " + logged_in_student.get_id() + ": exited");
-                            }
-                            if (logged_in_instructor != null) {
-                                System.out.println("Instructor " + logged_in_instructor.get_id() + ": exited");
-                            }
-                            // Following message is sent so the exiting message is displayed with client ID
-                            String input_exit = client_input;
-                            break;
                         default:
                             break;
                         }
@@ -386,9 +445,13 @@ public class Server {
                 } catch (NullPointerException e) {
                     if (logged_in_student != null) {
                         System.out.println("Student " + logged_in_student.get_id() + ": Closed unexpectedly");
+                        find_student_in_string(logged_in_student.get_id()).set_logged_in(false);
+                        write_change_to_database_file(1);
                     }
                     if (logged_in_instructor != null) {
                         System.out.println("Instructor " + logged_in_instructor.get_id() + ": Closed unexpectedly");
+                        find_instructor_in_string(logged_in_instructor.get_id()).set_logged_in(false);
+                        write_change_to_database_file(2);
                     }
                 }
 
