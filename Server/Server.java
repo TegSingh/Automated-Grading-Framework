@@ -70,8 +70,6 @@ public class Server {
                     // Create a student object and add it to the arraylist
                     Student student = new Student(id, password, name, grade, instructor_id, logged_in);
                     return_students.add(student);
-                    System.out.println(student.toString());
-
                 }
 
                 // Close the scanner object
@@ -115,7 +113,6 @@ public class Server {
                     // Create a student object and add it to the arraylist
                     Instructor instructor = new Instructor(id, password, name, course_code, logged_in);
                     return_instructors.add(instructor);
-                    System.out.println(instructor.toString());
                 }
 
                 // Close the scanner object
@@ -321,6 +318,78 @@ public class Server {
                     }
                 } else {
                     System.out.println("Server: Could not complete login");
+                }
+
+                // Read the input from the client
+                String client_input = null;
+                try {
+                    while (!(client_input = in.readLine()).equals("Exit")) {
+
+                        System.out.println(client_input);
+                        switch (client_input) {
+
+                        // Student requested to make submissions
+                        case "Make submissions":
+                            System.out.println(
+                                    "Student " + logged_in_student.get_id() + ": Requested to submit an assignment");
+                            String input_make_submissions = client_input;
+                            break;
+
+                        // Student requested a list a pending assignment
+                        case "Check pending assignments":
+                            System.out.println("Student " + logged_in_student.get_id()
+                                    + ": Requested to check pending assignments");
+                            String input_pending_assignments = client_input;
+                            break;
+
+                        // Instructor request posting assignment
+                        case "Post assignment":
+                            System.out.println("Instructor " + logged_in_instructor.get_id()
+                                    + ": Requested to post an assignment for course: "
+                                    + logged_in_instructor.get_course_code());
+                            String input_post_assignment = client_input;
+                            break;
+
+                        // Instructor request reviewing submissions - Autograding, manual review file
+                        case "Review submissions":
+                            System.out.println("Instructor " + logged_in_instructor.get_id()
+                                    + ": Requested to review student submissions");
+                            String input_review_submissions = client_input;
+                            break;
+
+                        // Instructor or Student request Log out
+                        case "Log out":
+                            if (logged_in_student != null) {
+                                System.out.println("Student " + logged_in_student.get_id() + ": Logging out");
+                            }
+                            if (logged_in_instructor != null) {
+                                System.out.println("Instructor " + logged_in_instructor.get_id() + ": Logging out");
+                            }
+                            String input_log_out = client_input;
+                            break;
+
+                        // Client requests exit
+                        case "Exit":
+                            if (logged_in_student != null) {
+                                System.out.println("Student " + logged_in_student.get_id() + ": exited");
+                            }
+                            if (logged_in_instructor != null) {
+                                System.out.println("Instructor " + logged_in_instructor.get_id() + ": exited");
+                            }
+                            // Following message is sent so the exiting message is displayed with client ID
+                            String input_exit = client_input;
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    if (logged_in_student != null) {
+                        System.out.println("Student " + logged_in_student.get_id() + ": Closed unexpectedly");
+                    }
+                    if (logged_in_instructor != null) {
+                        System.out.println("Instructor " + logged_in_instructor.get_id() + ": Closed unexpectedly");
+                    }
                 }
 
             } catch (IOException e) {

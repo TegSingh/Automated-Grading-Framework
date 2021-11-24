@@ -2,15 +2,17 @@ package Client;
 
 import java.io.*;
 import java.util.*;
-
-import Student.Student;
-
 import java.net.*;
 
 public class Client {
 
+    public Client() {
+    }
+
     public static void main(String[] args) {
 
+        boolean student_flag;
+        int client_id = 0;
         // Socket active on port 3000
         try (Socket socket = new Socket("localhost", 3000)) {
 
@@ -22,7 +24,7 @@ public class Client {
 
             // Flag indicating if a client should proceed or not
             boolean login_flag = false;
-
+            int credential_choice = 0;
             Scanner scanner = new Scanner(System.in);
 
             // Loop until the login activity is done
@@ -38,7 +40,7 @@ public class Client {
                 credential_choice_input = scanner.nextLine();
                 credentials.add(credential_choice_input);
 
-                int credential_choice = Integer.parseInt(credential_choice_input);
+                credential_choice = Integer.parseInt(credential_choice_input);
                 if (credential_choice != 1 && credential_choice != 2) {
                     System.out.println("Invalid input, Please try again");
                     continue;
@@ -73,6 +75,7 @@ public class Client {
                 if (server_response_login.equals("Login successful")) {
                     System.out.println("Login successful");
                     login_flag = true;
+                    client_id = Integer.parseInt(id);
                 } else if (server_response_login.equals("ID not found")) {
                     System.out.println("Entered ID not found");
                 } else {
@@ -80,20 +83,77 @@ public class Client {
                 }
             }
 
-            if (login_flag) {
-                System.out.println("Login activity done");
-            } else {
-                // End the function if the user input is exit
-                return;
-            }
+            // Set up the student flag value to indicate the type of client
+            student_flag = credential_choice == 1 ? true : false;
+            String print_data = student_flag ? " Student ID: " : " Instructor ID: ";
+            System.out.println("Welcome" + print_data + client_id);
+
+            // Login activity completed for client
+            // ____________________________________________________________________________________________________________
+
+            String line = "";
+            boolean first_client_menu_flag = false;
 
             // Begin the main loop following login
-            Scanner sc = new Scanner(System.in);
-            String line = "";
-            while (!(line = sc.nextLine()).equals("exit")) {
-                System.out.println("Main client loop begins");
-                while (sc.hasNextLine()) {
-                    line = sc.next() + sc.nextLine();
+            if (student_flag) {
+                while (!first_client_menu_flag && !line.equalsIgnoreCase("exit")) {
+
+                    // Posting client specific menu
+                    display_student_menu();
+                    line = scanner.nextLine();
+
+                    switch (line) {
+                    case "1":
+                        System.out.println("Student chose to check the list of pending assignments");
+                        out.println("Check pending assignments");
+                        break;
+                    case "2":
+                        System.out.println("Student chose to make a submission for an assignment");
+                        out.println("Make submissions");
+                        break;
+                    case "3":
+                        System.out.println("Student chose to log out and exit");
+                        out.println("Log out");
+                        break;
+                    case "exit":
+                        out.println("Exit");
+                        System.out.println("Goodbye. You will automatically be logged out");
+                        return;
+                    default:
+                        System.out.println("Invalid input please try again");
+                        continue;
+                    }
+                }
+            } else {
+
+                // Main loop for instructor
+                while (!first_client_menu_flag && !line.equalsIgnoreCase("exit")) {
+
+                    // Posting client specific menu
+                    display_instructor_menu();
+                    line = scanner.nextLine();
+
+                    switch (line) {
+                    case "1":
+                        System.out.println("Instructor chose to post an assignment");
+                        out.println("Post assignment");
+                        break;
+                    case "2":
+                        System.out.println("Instructor chose to review submissions for the assignment");
+                        out.println("Review submissions");
+                        break;
+                    case "3":
+                        System.out.println("Instructor chose to log out and exit");
+                        out.println("Log out");
+                        break;
+                    case "exit":
+                        System.out.println("Goodbye. You will automatically be logged out");
+                        out.println("Exit");
+                        return;
+                    default:
+                        System.out.println("Invalid input please try again");
+                        continue;
+                    }
                 }
             }
 
@@ -111,6 +171,26 @@ public class Client {
 
         sc.close();
         return login_credentials;
+    }
+
+    // Method to display the student menu
+    public static void display_student_menu() {
+        System.out.println("Make a selection");
+        System.out.println("1. Check pending assignments");
+        System.out.println("2. Submit an assignment");
+        System.out.println("Enter exit to terminate process");
+        System.out.println("Enter choice: ");
+    }
+
+    // Method to display the instructor menu
+    public static void display_instructor_menu() {
+        System.out.println("Make a selection");
+        System.out.println("1. Post an assignment");
+        System.out.println("2. Review submissions");
+        // Manual Review - Download student submission file
+        // Automatic grading - GRADING CORE
+        System.out.println("Enter exit to terminate process");
+        System.out.println("Enter Choice: ");
     }
 
     // Method to convert Arraylist to string
