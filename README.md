@@ -8,6 +8,7 @@
 4. Server keeps track of the instructor and students
 5. Students can check pending assignments for a course
 6. Students can answer questions through the software using interactive terminal messages
+7. A same client cannot log in twice. This is checked through appropriate error handling
 
 ## Instructions: 
 

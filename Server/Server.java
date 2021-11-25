@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javax.swing.text.html.HTMLDocument.RunElement;
-
 import Instructor.Instructor;
 import Student.Student;
 
@@ -261,6 +259,28 @@ public class Server {
 
         }
 
+        // Method to get list of logged in students
+        public ArrayList<Integer> get_logged_in_students() {
+            ArrayList<Integer> return_students = new ArrayList<>();
+            for (Student student : students) {
+                if (student.is_logged_in()) {
+                    return_students.add(student.get_id());
+                }
+            }
+            return return_students;
+        }
+
+        // Method to get the list of logged in instructors
+        public ArrayList<Integer> get_logged_in_instructors() {
+            ArrayList<Integer> return_instructors = new ArrayList<>();
+            for (Instructor instructor : instructors) {
+                if (instructor.is_logged_in()) {
+                    return_instructors.add(instructor.get_id());
+                }
+            }
+            return return_instructors;
+        }
+
         // Method to write change to database file
         public void write_change_to_database_file(int type) {
             if (type == 1) {
@@ -319,12 +339,19 @@ public class Server {
                             // This is a student
                             int validated_student_id = validate_student(id, password);
 
+                            // Get the list of currently logged in students
+                            ArrayList<Integer> logged_in_students = get_logged_in_students();
+                            boolean student_already_logged_in = logged_in_students.contains(validated_student_id);
+
                             if (validated_student_id == 0) {
                                 System.out.println("Server: Student ID not found");
                                 out.println("ID not found");
                             } else if (validated_student_id == 1) {
                                 System.out.println("Server: Password not correct for student");
                                 out.println("Password not correct");
+                            } else if (student_already_logged_in) {
+                                System.out.println("Student already logged in");
+                                out.println("Already logged in");
                             } else {
                                 System.out.println("Server: Student found and validated");
 
@@ -344,12 +371,20 @@ public class Server {
                             // This is an instructor
                             int validated_instructor_id = validate_instructor(id, password);
 
+                            // Get the list of currently logged in instructors
+                            ArrayList<Integer> logged_in_instructors = get_logged_in_instructors();
+                            boolean instructor_already_logged_in = logged_in_instructors
+                                    .contains(validated_instructor_id);
+
                             if (validated_instructor_id == 0) {
                                 System.out.println("Server: Instructor ID not found");
                                 out.println("ID not found");
                             } else if (validated_instructor_id == 1) {
                                 System.out.println("Server: Password not correct for instructor");
                                 out.println("Password not correct");
+                            } else if (instructor_already_logged_in) {
+                                System.out.println("Instructor already logged in");
+                                out.println("Already logged in");
                             } else {
                                 System.out.println("Server: Instructor found and validated");
 
@@ -396,7 +431,6 @@ public class Server {
                 try {
                     while (!(client_input = in.readLine()).equals("Exit")) {
 
-                        System.out.println(client_input);
                         switch (client_input) {
 
                         // Student requested to make submissions
@@ -442,7 +476,9 @@ public class Server {
                             break;
                         }
                     }
+
                 } catch (NullPointerException e) {
+
                     if (logged_in_student != null) {
                         System.out.println("Student " + logged_in_student.get_id() + ": Closed unexpectedly");
                         find_student_in_string(logged_in_student.get_id()).set_logged_in(false);

@@ -78,6 +78,8 @@ public class Client {
                     client_id = Integer.parseInt(id);
                 } else if (server_response_login.equals("ID not found")) {
                     System.out.println("Entered ID not found");
+                } else if (server_response_login.equals("Already logged in")) {
+                    System.out.println("Student already in");
                 } else {
                     System.out.println("Entered password not correct");
                 }
@@ -167,21 +169,26 @@ public class Client {
 
     // Method to display the student menu
     public static void display_student_menu() {
+        System.out.println("----------------------------------------");
         System.out.println("Make a selection");
         System.out.println("1. Check pending assignments");
         System.out.println("2. Submit an assignment");
         System.out.println("3. Log out");
         System.out.println("Enter exit to terminate process");
+        System.out.println("----------------------------------------");
         System.out.println("Enter choice: ");
+
     }
 
     // Method to display the instructor menu
     public static void display_instructor_menu() {
+        System.out.println("----------------------------------------");
         System.out.println("Make a selection");
         System.out.println("1. Post an assignment");
         System.out.println("2. Review submissions");
         System.out.println("3. Log out");
         System.out.println("Enter exit to terminate process");
+        System.out.println("----------------------------------------");
         System.out.println("Enter Choice: ");
     }
 
