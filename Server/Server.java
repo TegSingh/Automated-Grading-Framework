@@ -35,11 +35,15 @@ public class Server {
 
         private final Socket clientSocket;
         // List to store all Client(Student and Instructor) information
+        // Assignments, students and instructors need to be static since all instances
+        // are sharing the same copies
         private static ArrayList<Student> students = new ArrayList<>();
         private static ArrayList<Instructor> instructors = new ArrayList<>();
+        private static ArrayList<Assignment> assignments = new ArrayList<>();
+        // The logged in student and instructor values should not be static since they
+        // are different for every client(handler)
         Student logged_in_student = null;
         Instructor logged_in_instructor = null;
-        Assignment assignment = new Assignment();
 
         // Fetch data from student file and store into arraylist
         public ArrayList<Student> read_student_list_file() {
@@ -163,7 +167,6 @@ public class Server {
             Instructor instructor_found = null;
 
             // Loop through the entire list to find the instructor
-            // System.out.println("Server: Search element ID in Instructor list");
             for (Instructor instructor : instructors) {
                 if (instructor.get_id() == id) {
                     instructor_found = instructor;
@@ -175,7 +178,6 @@ public class Server {
                 System.out.println("Student not found");
                 return null;
             } else {
-                // System.out.println("Server: " + instructor_found.toString());
             }
 
             return instructor_found;
@@ -428,6 +430,9 @@ public class Server {
                     System.out.println("Server: Could not complete login");
                 }
 
+                // Create an instance of the assignment helper class
+                AssignmentHelper assignmentHelper = new AssignmentHelper();
+
                 // Read the input from the client
                 String client_input = null;
                 try {
@@ -445,6 +450,21 @@ public class Server {
                         case "Check pending assignments":
                             System.out.println("Student " + logged_in_student.get_id()
                                     + ": Requested to check pending assignments");
+
+                            // Find the pending assignments a student enrolled in a particular course has
+                            String course_code_pending = find_instructor_in_string(
+                                    logged_in_student.get_instructor_id()).get_course_code();
+                            System.out.println(course_code_pending);
+
+                            ArrayList<Integer> pending_assignments = assignmentHelper
+                                    .get_course_assignments(assignments, course_code_pending);
+                            out.println(pending_assignments.size());
+                            for (Integer pending_assignment_id : pending_assignments) {
+                                System.out.println(pending_assignment_id);
+                                out.println("Assignment ID:     " + pending_assignment_id + "    Course Code: "
+                                        + find_instructor_in_string(logged_in_student.get_instructor_id())
+                                                .get_course_code());
+                            }
                             break;
 
                         // Instructor request posting assignment
@@ -462,68 +482,9 @@ public class Server {
                                 assignment_lines[i] = in.readLine();
                             }
 
-                            ArrayList<String> questions = new ArrayList<>();
-                            ArrayList<String[]> choices = new ArrayList<String[]>();
-                            ArrayList<String> instructor_answers = new ArrayList<>();
-                            ArrayList<String> assignment_choices = new ArrayList<>();
-
-                            // Initialize the assignment object by decoding the client messages
-                            for (String assignment_line : assignment_lines) {
-                                System.out.println(assignment_line);
-                                if (assignment_line.contains("Assignment ID:")) {
-                                    String[] id_line = assignment_line.split(": ");
-                                    assignment.set_id(Integer.parseInt(id_line[1]));
-                                }
-
-                                if (assignment_line.equals("\n")) {
-                                    continue;
-                                }
-
-                                if (assignment_line.contains("-----")) {
-                                    continue;
-                                }
-
-                                if (assignment_line.contains("QUESTION")) {
-                                    String[] question = assignment_line.split(": ");
-                                    questions.add(question[1]);
-                                }
-
-                                if (assignment_line.contains("1. ")) {
-                                    assignment_choices.add(assignment_line.substring(3));
-                                }
-                                if (assignment_line.contains("2. ")) {
-                                    assignment_choices.add(assignment_line.substring(3));
-                                }
-                                if (assignment_line.contains("3. ")) {
-                                    assignment_choices.add(assignment_line.substring(3));
-                                }
-                                if (assignment_line.contains("4. ")) {
-                                    assignment_choices.add(assignment_line.substring(3));
-                                }
-
-                                if (assignment_choices.size() == 4) {
-                                    String[] mcq = new String[4];
-                                    for (int i = 0; i < assignment_choices.size(); i++) {
-                                        mcq[i] = assignment_choices.get(i);
-                                    }
-                                    // Empty the choices
-                                    assignment_choices.clear();
-                                    choices.add(mcq);
-                                }
-
-                                if (assignment_line.contains("The correct option is: ")) {
-                                    String[] instructor_answer_line = assignment_line.split(": ");
-                                    instructor_answers.add(instructor_answer_line[1]);
-                                }
-
-                            }
-
-                            assignment.set_course_code(logged_in_instructor.get_course_code());
-                            assignment.set_choices(choices);
-                            assignment.set_instructor_answers(instructor_answers);
-                            assignment.set_questions(questions);
-                            System.out.println(assignment.instructor_to_string());
-
+                            // Decode the assignment and add it to list
+                            assignments.add(assignmentHelper.decode_assignment(assignment_lines));
+                            System.out.println("Total Assignments: " + assignments.size());
                             break;
 
                         // Instructor request reviewing submissions - Autograding, manual review file
@@ -551,7 +512,7 @@ public class Server {
                         }
                     }
 
-                } catch (NullPointerException e) {
+                } catch (Exception e) {
 
                     if (logged_in_student != null) {
                         System.out.println("Student " + logged_in_student.get_id() + ": Closed unexpectedly");

@@ -108,10 +108,22 @@ public class Client {
                     line = scanner.nextLine();
 
                     switch (line) {
+
+                    // Student chose to check the list of pending assignments for the course they
+                    // are enrolled in
                     case "1":
                         System.out.println("Student chose to check the list of pending assignments");
                         out.println("Check pending assignments");
+                        System.out.println("----------------------------------------");
+                        System.out.println("Following are your pending assignments");
+                        int num = Integer.parseInt(in.readLine());
+                        System.out.println(num);
+                        for (int i = 0; i < num; i++) {
+                            System.out.println(in.readLine());
+                        }
+                        System.out.println("----------------------------------------");
                         break;
+
                     case "2":
                         System.out.println("Student chose to make a submission for an assignment");
                         out.println("Make submissions");
