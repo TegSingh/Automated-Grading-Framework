@@ -2,6 +2,9 @@ package Client;
 
 import java.io.*;
 import java.util.*;
+
+import Assignment.Assignment;
+
 import java.net.*;
 
 public class Client {
@@ -79,7 +82,7 @@ public class Client {
                 } else if (server_response_login.equals("ID not found")) {
                     System.out.println("Entered ID not found");
                 } else if (server_response_login.equals("Already logged in")) {
-                    System.out.println("Student already in");
+                    System.out.println("Client already logged in");
                 } else {
                     System.out.println("Entered password not correct");
                 }
@@ -135,11 +138,83 @@ public class Client {
                     case "1":
                         System.out.println("Instructor chose to post an assignment");
                         out.println("Post assignment");
+                        Scanner sc = new Scanner(System.in);
+
+                        // Make sure to enter the digits
+                        System.out.println("Enter the number of questions");
+                        String num_questions_string = sc.nextLine();
+                        int num_questions = 0;
+                        if (num_questions_string.matches("[0-9]+")) {
+                            num_questions = Integer.parseInt(num_questions_string);
+                        } else {
+                            System.out.println("Enter valid number input");
+                            continue;
+                        }
+
+                        // Create an assignment object
+                        Assignment assignment = new Assignment();
+                        String input_post_assignment = "";
+                        ArrayList<String> questions = new ArrayList<>();
+                        ArrayList<String[]> choices = new ArrayList<String[]>();
+                        ArrayList<String> instructor_answers = new ArrayList<>();
+
+                        // Generate a random number of ID
+                        Random rand = new Random();
+                        int assignment_id = rand.nextInt(8999) + 1000;
+                        assignment.set_id(assignment_id);
+
+                        // Get the value for Course code
+                        String course_code = in.readLine();
+                        System.out.println("Course code: " + course_code);
+                        assignment.set_course_code(course_code);
+
+                        for (int i = 1; i <= num_questions; i++) {
+                            String[] mcq = new String[4];
+                            System.out.println("Enter Question " + i + ":");
+                            input_post_assignment = sc.nextLine();
+                            questions.add(input_post_assignment);
+
+                            // Get the choices for the questions
+                            for (int j = 1; j <= 4; j++) {
+                                System.out.println("Enter choice " + j + ": ");
+                                mcq[j - 1] = sc.nextLine();
+                            }
+                            choices.add(mcq);
+
+                            System.out.println("The question is: ");
+
+                            // Get the input for instructors answer
+                            System.out.print("Enter answer for the question: ");
+                            input_post_assignment = sc.nextLine();
+                            instructor_answers.add(input_post_assignment);
+                        }
+
+                        assignment.set_questions(questions);
+                        assignment.set_choices(choices);
+                        assignment.set_instructor_answers(instructor_answers);
+
+                        // Display the assignment as a string
+                        System.out.println(assignment.instructor_to_string());
+                        System.out.println("Are you happy with this assignment?");
+                        System.out.println(
+                                "NOTE: If you answer no, all you progress will be lost and you will be taken to the previous menu");
+                        input_post_assignment = sc.nextLine();
+                        if (input_post_assignment.equals("yes")) {
+                            System.out.println("Generating Assignment....");
+                        } else {
+                            System.out.println("You will be taken back to the previous menu");
+                            continue;
+                        }
+
                         break;
+
+                    // Execute when the instructor chosen to review submissions
                     case "2":
                         System.out.println("Instructor chose to review submissions for the assignment");
                         out.println("Review submissions");
                         break;
+
+                    // Instructor chose to log out and exit
                     case "3":
                         System.out.println("Instructor chose to log out and exit");
                         out.println("Log out");

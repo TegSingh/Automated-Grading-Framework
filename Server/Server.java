@@ -182,7 +182,7 @@ public class Server {
 
         // Method to validate login information for the Student
         public int validate_student(int id, String password) {
-            System.out.println("Server: Validate client method called");
+            // System.out.println("Server: Validate client method called");
             Student student = find_student_in_string(id);
 
             if (student != null) {
@@ -205,7 +205,7 @@ public class Server {
 
         // Method to validate login information for the Instructor
         public int validate_instructor(int id, String password) {
-            System.out.println("Server: Validate instructor method called");
+            // System.out.println("Server: Validate instructor method called");
             Instructor instructor = find_instructor_in_string(id);
 
             if (instructor != null) {
@@ -350,7 +350,7 @@ public class Server {
                                 System.out.println("Server: Password not correct for student");
                                 out.println("Password not correct");
                             } else if (student_already_logged_in) {
-                                System.out.println("Student already logged in");
+                                System.out.println("Server: Student already logged in");
                                 out.println("Already logged in");
                             } else {
                                 System.out.println("Server: Student found and validated");
@@ -383,7 +383,7 @@ public class Server {
                                 System.out.println("Server: Password not correct for instructor");
                                 out.println("Password not correct");
                             } else if (instructor_already_logged_in) {
-                                System.out.println("Instructor already logged in");
+                                System.out.println("Server: Instructor already logged in");
                                 out.println("Already logged in");
                             } else {
                                 System.out.println("Server: Instructor found and validated");
@@ -450,6 +450,7 @@ public class Server {
                             System.out.println("Instructor " + logged_in_instructor.get_id()
                                     + ": Requested to post an assignment for course: "
                                     + logged_in_instructor.get_course_code());
+                            out.println(logged_in_instructor.get_course_code());
                             break;
 
                         // Instructor request reviewing submissions - Autograding, manual review file
