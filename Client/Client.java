@@ -135,7 +135,10 @@ public class Client {
                     line = scanner.nextLine();
 
                     switch (line) {
+
+                    // Execute when instructor choses to post an assignment
                     case "1":
+
                         System.out.println("Instructor chose to post an assignment");
                         out.println("Post assignment");
                         Scanner sc = new Scanner(System.in);
@@ -198,9 +201,26 @@ public class Client {
                         System.out.println("Are you happy with this assignment?");
                         System.out.println(
                                 "NOTE: If you answer no, all you progress will be lost and you will be taken to the previous menu");
+                        System.out.println("NOTE: Answering yes will post the assignment");
                         input_post_assignment = sc.nextLine();
                         if (input_post_assignment.equals("yes")) {
                             System.out.println("Generating Assignment....");
+                            int i = 0;
+                            while (i < 100) {
+                                i += 1;
+                            }
+                            System.out.println("Assignment created....");
+                            i = 0;
+                            while (i < 100) {
+                                i += 1;
+                            }
+                            // Send the assignment to the server
+                            String[] instructor_string = assignment.instructor_to_string().split("\n");
+                            // Get the length of the assignment string
+                            out.println(instructor_string.length);
+                            for (String assignment_line : instructor_string) {
+                                out.println(assignment_line);
+                            }
                         } else {
                             System.out.println("You will be taken back to the previous menu");
                             continue;
