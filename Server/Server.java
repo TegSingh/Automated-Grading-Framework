@@ -34,14 +34,11 @@ public class Server {
     private static class ClientHandler implements Runnable {
 
         private final Socket clientSocket;
-        // List to store all Client(Student and Instructor) information
-        // Assignments, students and instructors need to be static since all instances
-        // are sharing the same copies
+
+        // List to store all Client(Student and Instructor) and assignment information
         private static ArrayList<Student> students = new ArrayList<>();
         private static ArrayList<Instructor> instructors = new ArrayList<>();
         private static ArrayList<Assignment> assignments = new ArrayList<>();
-        // The logged in student and instructor values should not be static since they
-        // are different for every client(handler)
         Student logged_in_student = null;
         Instructor logged_in_instructor = null;
 
@@ -404,9 +401,9 @@ public class Server {
                             }
                         }
 
-                    } catch (NullPointerException e) {
+                    } catch (Exception e) {
                         // This is to handle an unexpected potential ctrl C termination of the client
-                        System.out.println("Client unexpectedly terminated");
+                        System.out.println("Server: Client unexpectedly terminated");
                         if (logged_in_student != null) {
                             find_student_in_string(logged_in_student.get_id()).set_logged_in(false);
                             write_change_to_database_file(1);
@@ -420,7 +417,6 @@ public class Server {
                 }
 
                 if (login_flag) {
-                    System.out.println("Server: Login completed for client");
                     if (logged_in_student == null) {
                         System.out.println("Server: Client logged in: " + logged_in_instructor.toString());
                     } else {
@@ -437,83 +433,139 @@ public class Server {
                 String client_input = null;
                 try {
                     while (!(client_input = in.readLine()).equals("Exit")) {
-
+                        System.out.println(client_input);
                         switch (client_input) {
 
-                        // Student requested to make submissions
-                        case "Make submissions":
-                            System.out.println(
-                                    "Student " + logged_in_student.get_id() + ": Requested to submit an assignment");
-                            break;
+                            // Student requested to make submissions
+                            case "Make submissions":
 
-                        // Student requested a list a pending assignment
-                        case "Check pending assignments":
-                            System.out.println("Student " + logged_in_student.get_id()
-                                    + ": Requested to check pending assignments");
+                                // Get the list of assignments pending for a course
+                                ArrayList<Integer> pending_assignments_to_submit = assignmentHelper
+                                        .get_course_assignments(
+                                                assignments,
+                                                find_instructor_in_string(logged_in_student.get_instructor_id())
+                                                        .get_course_code());
 
-                            // Find the pending assignments a student enrolled in a particular course has
-                            String course_code_pending = find_instructor_in_string(
-                                    logged_in_student.get_instructor_id()).get_course_code();
-                            System.out.println(course_code_pending);
+                                if (pending_assignments_to_submit.size() == 0) {
+                                    System.out.println("No assignments to submit");
+                                    out.println("No assignment found to submit");
+                                    break;
+                                } else {
+                                    out.println(pending_assignments_to_submit.size());
+                                }
 
-                            ArrayList<Integer> pending_assignments = assignmentHelper
-                                    .get_course_assignments(assignments, course_code_pending);
-                            out.println(pending_assignments.size());
-                            for (Integer pending_assignment_id : pending_assignments) {
-                                System.out.println(pending_assignment_id);
-                                out.println("Assignment ID:     " + pending_assignment_id + "    Course Code: "
-                                        + find_instructor_in_string(logged_in_student.get_instructor_id())
-                                                .get_course_code());
-                            }
-                            break;
+                                for (Integer pending_assignment_id : pending_assignments_to_submit) {
+                                    System.out.println(pending_assignment_id);
+                                    out.println("Assignment ID:     " + pending_assignment_id + "    Course Code: "
+                                            + find_instructor_in_string(logged_in_student.get_instructor_id())
+                                                    .get_course_code());
+                                }
 
-                        // Instructor request posting assignment
-                        case "Post assignment":
-                            System.out.println("Instructor " + logged_in_instructor.get_id()
-                                    + ": Requested to post an assignment for course: "
-                                    + logged_in_instructor.get_course_code());
-                            out.println(logged_in_instructor.get_course_code());
+                                // Get the ID the user wishes to submit
+                                String submit_assignment_id_string = in.readLine();
+                                System.out.println("Student " + logged_in_student.get_id()
+                                        + ": Request to submit Assignment ID: " + submit_assignment_id_string);
 
-                            // Get the length of assignment string for instructor
-                            int assignment_length = Integer.parseInt(in.readLine());
-                            String[] assignment_lines = new String[assignment_length];
+                                // Submit the assignment based on ID entered by the user
+                                if (submit_assignment_id_string.matches("[0-9]+")) {
 
-                            for (int i = 0; i < assignment_length; i++) {
-                                assignment_lines[i] = in.readLine();
-                            }
+                                    System.out.println(submit_assignment_id_string);
+                                    int submit_assignment_id = Integer.parseInt(submit_assignment_id_string);
+                                    Assignment assignment_to_submit = assignmentHelper.get_assignment_by_id(assignments,
+                                            submit_assignment_id);
+                                    if (assignment_to_submit != null) {
+                                        String[] submission_lines = assignment_to_submit.student_to_string()
+                                                .split("\n");
+                                        out.println(submission_lines.length);
+                                        for (String submission_line : submission_lines) {
+                                            out.println(submission_line);
+                                        }
+                                    } else {
+                                        System.out.println("Server: Assignment not found");
+                                        out.println("Assignment not found");
+                                    }
+                                } else {
+                                    System.out.println("Server: Assignment ID not valid");
+                                    break;
+                                }
+                                break;
 
-                            // Decode the assignment and add it to list
-                            assignments.add(assignmentHelper.decode_assignment(assignment_lines));
-                            System.out.println("Total Assignments: " + assignments.size());
-                            break;
+                            // Student requested a list a pending assignment
+                            case "Check pending assignments":
+                                System.out.println("Student " + logged_in_student.get_id()
+                                        + ": Requested to check pending assignments");
 
-                        // Instructor request reviewing submissions - Autograding, manual review file
-                        case "Review submissions":
-                            System.out.println("Instructor " + logged_in_instructor.get_id()
-                                    + ": Requested to review student submissions");
-                            break;
+                                // Find the pending assignments a student enrolled in a particular course has
+                                String course_code_pending = find_instructor_in_string(
+                                        logged_in_student.get_instructor_id()).get_course_code();
+                                System.out.println(course_code_pending);
 
-                        // Instructor or Student request Log out
-                        case "Log out":
-                            if (logged_in_student != null) {
-                                System.out.println("Student " + logged_in_student.get_id() + ": Logging out");
-                                find_student_in_string(logged_in_student.get_id()).set_logged_in(false);
-                                write_change_to_database_file(1);
-                            }
-                            if (logged_in_instructor != null) {
-                                System.out.println("Instructor " + logged_in_instructor.get_id() + ": Logging out");
-                                find_instructor_in_string(logged_in_instructor.get_id()).set_logged_in(false);
-                                write_change_to_database_file(2);
-                            }
-                            break;
+                                ArrayList<Integer> pending_assignments = assignmentHelper
+                                        .get_course_assignments(assignments, course_code_pending);
+                                out.println(pending_assignments.size());
+                                for (Integer pending_assignment_id : pending_assignments) {
+                                    System.out.println(pending_assignment_id);
+                                    out.println("Assignment ID:     " + pending_assignment_id + "    Course Code: "
+                                            + find_instructor_in_string(logged_in_student.get_instructor_id())
+                                                    .get_course_code());
+                                }
+                                break;
 
-                        default:
-                            break;
+                            // Instructor request posting assignment
+                            case "Post assignment":
+                                System.out.println("Instructor " + logged_in_instructor.get_id()
+                                        + ": Requested to post an assignment for course: "
+                                        + logged_in_instructor.get_course_code());
+                                out.println(logged_in_instructor.get_course_code());
+
+                                // Get the length of assignment string for instructor
+                                String assignment_length_string = in.readLine();
+                                int assignment_length = 0;
+                                if (assignment_length_string.matches("[0-9]+")) {
+                                    assignment_length = Integer.parseInt(assignment_length_string);
+                                } else {
+                                    System.out.println("Server: Number format error, Could not post assignment");
+                                    break;
+                                }
+                                String[] assignment_lines = new String[assignment_length];
+
+                                for (int i = 0; i < assignment_length; i++) {
+                                    assignment_lines[i] = in.readLine();
+                                }
+
+                                // Decode the assignment and add it to list
+                                assignments.add(assignmentHelper.decode_assignment(assignment_lines));
+                                System.out.println("Total Assignments: " + assignments.size());
+                                break;
+
+                            // Instructor request reviewing submissions - Autograding, manual review file
+                            case "Review submissions":
+                                System.out.println("Instructor " + logged_in_instructor.get_id()
+                                        + ": Requested to review student submissions");
+                                break;
+
+                            // Instructor or Student request Log out
+                            case "Log out":
+                                if (logged_in_student != null) {
+                                    System.out.println("Student " + logged_in_student.get_id() + ": Logging out");
+                                    find_student_in_string(logged_in_student.get_id()).set_logged_in(false);
+                                    write_change_to_database_file(1);
+                                }
+                                if (logged_in_instructor != null) {
+                                    System.out.println("Instructor " + logged_in_instructor.get_id() + ": Logging out");
+                                    find_instructor_in_string(logged_in_instructor.get_id()).set_logged_in(false);
+                                    write_change_to_database_file(2);
+                                }
+                                break;
+
+                            default:
+                                break;
                         }
                     }
 
                 } catch (Exception e) {
 
+                    e.printStackTrace();
                     if (logged_in_student != null) {
                         System.out.println("Student " + logged_in_student.get_id() + ": Closed unexpectedly");
                         find_student_in_string(logged_in_student.get_id()).set_logged_in(false);

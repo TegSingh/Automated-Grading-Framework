@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import Assignment.Assignment;
+import Client.AssignmentHelper;
 
 import java.net.*;
 
@@ -98,7 +99,7 @@ public class Client {
 
             String line = "";
             boolean first_client_menu_flag = false;
-            String input = "";
+
             // Begin the main loop following login
             if (student_flag) {
                 while (!first_client_menu_flag && !line.equalsIgnoreCase("exit")) {
@@ -109,32 +110,67 @@ public class Client {
 
                     switch (line) {
 
-                    // Student chose to check the list of pending assignments for the course they
-                    // are enrolled in
-                    case "1":
-                        System.out.println("Student chose to check the list of pending assignments");
-                        out.println("Check pending assignments");
-                        System.out.println("----------------------------------------");
-                        System.out.println("Following are your pending assignments");
-                        int num = Integer.parseInt(in.readLine());
-                        System.out.println(num);
-                        for (int i = 0; i < num; i++) {
-                            System.out.println(in.readLine());
-                        }
-                        System.out.println("----------------------------------------");
-                        break;
+                        // Student chose to check the list of pending assignments for the course they
+                        // are enrolled in
+                        case "1":
+                            System.out.println("Student chose to check the list of pending assignments");
+                            out.println("Check pending assignments");
+                            System.out.println("----------------------------------------");
+                            System.out.println("Following are your pending assignments");
+                            int num = Integer.parseInt(in.readLine());
+                            for (int i = 0; i < num; i++) {
+                                String pending_assignment = in.readLine();
+                                System.out.println(pending_assignment);
+                            }
 
-                    case "2":
-                        System.out.println("Student chose to make a submission for an assignment");
-                        out.println("Make submissions");
-                        break;
-                    case "3":
-                        System.out.println("Student chose to log out and exit");
-                        out.println("Log out");
-                        return;
-                    default:
-                        System.out.println("Invalid input please try again");
-                        continue;
+                            // Empty the list of pending assignments
+                            System.out.println("----------------------------------------");
+                            break;
+
+                        case "2":
+                            out.println("Make submissions");
+                            int available_assignments = 0;
+                            String available_assignments_string = in.readLine();
+                            if (available_assignments_string.equals("No assignment found to submit")) {
+                                System.out.println("No assignments available to submit");
+                                break;
+                            } else {
+                                available_assignments = Integer.parseInt(available_assignments_string);
+                            }
+                            for (int i = 0; i < available_assignments; i++) {
+                                String assignments_to_submit = in.readLine();
+                                System.out.println(assignments_to_submit);
+                            }
+
+                            System.out.println("Enter Assignment ID to complete: ");
+                            String assignment_id = scanner.nextLine();
+                            out.println(assignment_id);
+
+                            String num_lines_string = in.readLine();
+                            if (num_lines_string.equals("Assignment not found")) {
+                                System.out.println("Assignment not found on Server");
+                                break;
+                            }
+
+                            int num_lines = Integer.parseInt(num_lines_string);
+                            String[] submission_lines = new String[num_lines];
+                            for (int i = 0; i < num_lines; i++) {
+                                submission_lines[i] = in.readLine();
+                            }
+
+                            AssignmentHelper assignmentHelper = new AssignmentHelper();
+                            Assignment submission = assignmentHelper.decode_assignment(submission_lines);
+
+                            break;
+
+                        case "3":
+                            System.out.println("Student chose to log out and exit");
+                            out.println("Log out");
+                            return;
+
+                        default:
+                            System.out.println("Invalid input please try again");
+                            continue;
                     }
                 }
             } else {
@@ -148,112 +184,112 @@ public class Client {
 
                     switch (line) {
 
-                    // Execute when instructor choses to post an assignment
-                    case "1":
+                        // Execute when instructor choses to post an assignment
+                        case "1":
 
-                        System.out.println("Instructor chose to post an assignment");
-                        out.println("Post assignment");
-                        Scanner sc = new Scanner(System.in);
+                            System.out.println("Instructor chose to post an assignment");
+                            out.println("Post assignment");
+                            Scanner sc = new Scanner(System.in);
 
-                        // Make sure to enter the digits
-                        System.out.println("Enter the number of questions");
-                        String num_questions_string = sc.nextLine();
-                        int num_questions = 0;
-                        if (num_questions_string.matches("[0-9]+")) {
-                            num_questions = Integer.parseInt(num_questions_string);
-                        } else {
-                            System.out.println("Enter valid number input");
-                            continue;
-                        }
+                            // Make sure to enter the digits
+                            System.out.println("Enter the number of questions");
+                            String num_questions_string = sc.nextLine();
+                            int num_questions = 0;
+                            if (num_questions_string.matches("[0-9]+")) {
+                                num_questions = Integer.parseInt(num_questions_string);
+                            } else {
+                                System.out.println("Enter valid number input");
+                                continue;
+                            }
 
-                        // Create an assignment object
-                        Assignment assignment = new Assignment();
-                        String input_post_assignment = "";
-                        ArrayList<String> questions = new ArrayList<>();
-                        ArrayList<String[]> choices = new ArrayList<String[]>();
-                        ArrayList<String> instructor_answers = new ArrayList<>();
+                            // Create an assignment object
+                            Assignment assignment = new Assignment();
+                            String input_post_assignment = "";
+                            ArrayList<String> questions = new ArrayList<>();
+                            ArrayList<String[]> choices = new ArrayList<String[]>();
+                            ArrayList<String> instructor_answers = new ArrayList<>();
 
-                        // Generate a random number of ID
-                        Random rand = new Random();
-                        int assignment_id = rand.nextInt(8999) + 1000;
-                        assignment.set_id(assignment_id);
+                            // Generate a random number of ID
+                            Random rand = new Random();
+                            int assignment_id = rand.nextInt(8999) + 1000;
+                            assignment.set_id(assignment_id);
 
-                        // Get the value for Course code
-                        String course_code = in.readLine();
-                        System.out.println("Course code: " + course_code);
-                        assignment.set_course_code(course_code);
+                            // Get the value for Course code
+                            String course_code = in.readLine();
+                            System.out.println("Course code: " + course_code);
+                            assignment.set_course_code(course_code);
 
-                        for (int i = 1; i <= num_questions; i++) {
-                            String[] mcq = new String[4];
-                            System.out.println("Enter Question " + i + ":");
+                            for (int i = 1; i <= num_questions; i++) {
+                                String[] mcq = new String[4];
+                                System.out.println("Enter Question " + i + ":");
+                                input_post_assignment = sc.nextLine();
+                                questions.add(input_post_assignment);
+
+                                // Get the choices for the questions
+                                for (int j = 1; j <= 4; j++) {
+                                    System.out.println("Enter choice " + j + ": ");
+                                    mcq[j - 1] = sc.nextLine();
+                                }
+                                choices.add(mcq);
+
+                                System.out.println("The question is: ");
+
+                                // Get the input for instructors answer
+                                System.out.print("Enter answer for the question: ");
+                                input_post_assignment = sc.nextLine();
+                                instructor_answers.add(input_post_assignment);
+                            }
+
+                            assignment.set_questions(questions);
+                            assignment.set_choices(choices);
+                            assignment.set_instructor_answers(instructor_answers);
+
+                            // Display the assignment as a string
+                            System.out.println(assignment.instructor_to_string());
+                            System.out.println("Are you happy with this assignment?");
+                            System.out.println(
+                                    "NOTE: If you answer no, all you progress will be lost and you will be taken to the previous menu");
+                            System.out.println("NOTE: Answering yes will post the assignment");
                             input_post_assignment = sc.nextLine();
-                            questions.add(input_post_assignment);
-
-                            // Get the choices for the questions
-                            for (int j = 1; j <= 4; j++) {
-                                System.out.println("Enter choice " + j + ": ");
-                                mcq[j - 1] = sc.nextLine();
+                            if (input_post_assignment.equals("yes")) {
+                                System.out.println("Generating Assignment....");
+                                int i = 0;
+                                while (i < 100) {
+                                    i += 1;
+                                }
+                                System.out.println("Assignment created....");
+                                i = 0;
+                                while (i < 100) {
+                                    i += 1;
+                                }
+                                // Send the assignment to the server
+                                String[] instructor_string = assignment.instructor_to_string().split("\n");
+                                // Get the length of the assignment string
+                                out.println(instructor_string.length);
+                                for (String assignment_line : instructor_string) {
+                                    out.println(assignment_line);
+                                }
+                            } else {
+                                System.out.println("You will be taken back to the previous menu");
+                                continue;
                             }
-                            choices.add(mcq);
 
-                            System.out.println("The question is: ");
+                            break;
 
-                            // Get the input for instructors answer
-                            System.out.print("Enter answer for the question: ");
-                            input_post_assignment = sc.nextLine();
-                            instructor_answers.add(input_post_assignment);
-                        }
+                        // Execute when the instructor chosen to review submissions
+                        case "2":
+                            System.out.println("Instructor chose to review submissions for the assignment");
+                            out.println("Review submissions");
+                            break;
 
-                        assignment.set_questions(questions);
-                        assignment.set_choices(choices);
-                        assignment.set_instructor_answers(instructor_answers);
-
-                        // Display the assignment as a string
-                        System.out.println(assignment.instructor_to_string());
-                        System.out.println("Are you happy with this assignment?");
-                        System.out.println(
-                                "NOTE: If you answer no, all you progress will be lost and you will be taken to the previous menu");
-                        System.out.println("NOTE: Answering yes will post the assignment");
-                        input_post_assignment = sc.nextLine();
-                        if (input_post_assignment.equals("yes")) {
-                            System.out.println("Generating Assignment....");
-                            int i = 0;
-                            while (i < 100) {
-                                i += 1;
-                            }
-                            System.out.println("Assignment created....");
-                            i = 0;
-                            while (i < 100) {
-                                i += 1;
-                            }
-                            // Send the assignment to the server
-                            String[] instructor_string = assignment.instructor_to_string().split("\n");
-                            // Get the length of the assignment string
-                            out.println(instructor_string.length);
-                            for (String assignment_line : instructor_string) {
-                                out.println(assignment_line);
-                            }
-                        } else {
-                            System.out.println("You will be taken back to the previous menu");
+                        // Instructor chose to log out and exit
+                        case "3":
+                            System.out.println("Instructor chose to log out and exit");
+                            out.println("Log out");
+                            return;
+                        default:
+                            System.out.println("Invalid input please try again");
                             continue;
-                        }
-
-                        break;
-
-                    // Execute when the instructor chosen to review submissions
-                    case "2":
-                        System.out.println("Instructor chose to review submissions for the assignment");
-                        out.println("Review submissions");
-                        break;
-
-                    // Instructor chose to log out and exit
-                    case "3":
-                        System.out.println("Instructor chose to log out and exit");
-                        out.println("Log out");
-                        return;
-                    default:
-                        System.out.println("Invalid input please try again");
-                        continue;
                     }
                 }
             }

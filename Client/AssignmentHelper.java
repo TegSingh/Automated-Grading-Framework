@@ -1,4 +1,4 @@
-package Server;
+package Client;
 
 import java.util.ArrayList;
 
@@ -20,7 +20,6 @@ public class AssignmentHelper {
 
         // Initialize the assignment object by decoding the client messages
         for (String assignment_line : assignment_lines) {
-
             if (assignment_line.contains("Assignment ID:")) {
                 String[] id_line = assignment_line.split(": ");
                 assignment.set_id(Integer.parseInt(id_line[1]));
@@ -81,32 +80,11 @@ public class AssignmentHelper {
         }
 
         assignment.set_choices(choices);
+        assignment.set_student_answers(student_answers);
         assignment.set_instructor_answers(instructor_answers);
         assignment.set_questions(questions);
-        System.out.println(assignment.instructor_to_string());
+
         return assignment;
     }
 
-    // Method to get pending assignments for a particular student
-    public ArrayList<Integer> get_course_assignments(ArrayList<Assignment> assignments, String course_code) {
-        System.out.println("Server: Total Assignments: " + assignments.size());
-        ArrayList<Integer> pending_assignments = new ArrayList<>();
-        for (Assignment assignment : assignments) {
-            if (assignment.get_course_code().equals(course_code)) {
-                pending_assignments.add(assignment.get_id());
-            }
-        }
-        return pending_assignments;
-    }
-
-    // Method to get assignment for a certain ID
-    public Assignment get_assignment_by_id(ArrayList<Assignment> assignments, int id) {
-        Assignment return_assignment = null;
-        for (Assignment assignment : assignments) {
-            if (assignment.get_id() == id) {
-                return_assignment = assignment;
-            }
-        }
-        return return_assignment;
-    }
 }
