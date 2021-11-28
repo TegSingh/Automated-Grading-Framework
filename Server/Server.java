@@ -469,7 +469,6 @@ public class Server {
                                 // Submit the assignment based on ID entered by the user
                                 if (submit_assignment_id_string.matches("[0-9]+")) {
 
-                                    System.out.println(submit_assignment_id_string);
                                     int submit_assignment_id = Integer.parseInt(submit_assignment_id_string);
                                     Assignment assignment_to_submit = assignmentHelper.get_assignment_by_id(assignments,
                                             submit_assignment_id);
@@ -488,6 +487,41 @@ public class Server {
                                     System.out.println("Server: Assignment ID not valid");
                                     break;
                                 }
+
+                                // Read the length of the students submission
+                                int len = Integer.parseInt(in.readLine());
+                                System.out.println("Length: " + len);
+                                String[] complete_submission_lines = new String[len];
+                                for (int i = 0; i < len; i++) {
+                                    complete_submission_lines[i] = in.readLine();
+                                    System.out.println(complete_submission_lines[i]);
+                                }
+
+                                Assignment complete_submission = new Assignment();
+                                for (Assignment test_assignment : assignments) {
+                                    // Get ID from the assignment lines
+                                    for (String submission_line : complete_submission_lines) {
+                                        if (submission_line.contains("Assignment ID")) {
+                                            String[] submission_id = submission_line.split(": ");
+                                            complete_submission.set_id(Integer.parseInt(submission_id[1]));
+                                        }
+                                    }
+                                    if (test_assignment.get_id() == complete_submission.get_id()) {
+                                        test_assignment.set_student_answers(assignmentHelper
+                                                .decode_answers(complete_submission_lines));
+                                        System.out.println(test_assignment.toString());
+                                        complete_submission = test_assignment;
+                                    }
+                                }
+
+                                if (complete_submission.get_id() != 0) {
+                                    System.out.println(complete_submission.toString());
+                                    out.println("Submitted successfully");
+                                } else {
+                                    System.out.println(complete_submission.toString());
+                                    out.println("Could not submit assignment");
+                                }
+
                                 break;
 
                             // Student requested a list a pending assignment

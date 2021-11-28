@@ -47,6 +47,7 @@ public class AssignmentHelper {
                 String[] answer = assignment_line.split(": ");
                 student_answers.add(answer[1]);
             }
+
             if (assignment_line.contains("1. ")) {
                 assignment_choices.add(assignment_line.substring(3));
             }
@@ -85,6 +86,18 @@ public class AssignmentHelper {
         assignment.set_questions(questions);
         System.out.println(assignment.instructor_to_string());
         return assignment;
+    }
+
+    // Method to get answers from the student
+    public ArrayList<String> decode_answers(String[] assignment_lines) {
+        ArrayList<String> submitted_answers = new ArrayList<>();
+        for (String assignment_line : assignment_lines) {
+            if (assignment_line.contains("ANSWER: ")) {
+                String[] answer = assignment_line.split(": ");
+                submitted_answers.add(answer[1]);
+            }
+        }
+        return submitted_answers;
     }
 
     // Method to get pending assignments for a particular student

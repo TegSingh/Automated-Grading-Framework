@@ -161,6 +161,43 @@ public class Client {
                             AssignmentHelper assignmentHelper = new AssignmentHelper();
                             Assignment submission = assignmentHelper.decode_assignment(submission_lines);
 
+                            // Get inputs from the student for answers to the assignment
+                            int counter = 0;
+
+                            ArrayList<String> student_answers = new ArrayList<>();
+                            System.out.println("----------------------------------------\nAssignment ID: ");
+                            submission.get_id();
+                            System.out.println(submission.get_course_code());
+                            System.out.println("----------------------------------------\n");
+
+                            for (String question : submission.get_questions()) {
+                                // Print the question
+                                System.out.println(
+                                        submission.question_to_string(question, submission.get_choices().get(counter)));
+                                System.out.println("Enter your choice: ");
+                                student_answers.add(scanner.nextLine());
+                                counter++;
+                            }
+
+                            // Set the submission from the student as the input from the arraylist
+                            submission.set_student_answers(student_answers);
+                            String[] submission_lines_student = submission.submission_to_string().split("\n");
+                            // Send the number of lines in the submission string to the server
+                            out.println(submission_lines_student.length);
+                            for (String submission_line_student : submission_lines_student) {
+                                System.out.println(submission_line_student);
+                                out.println(submission_line_student);
+                            }
+
+                            String submission_confirmation = in.readLine();
+                            System.out.println(submission_confirmation);
+                            // Check if the assignment was submitted successfully
+                            if (submission_confirmation.equals("Submitted successfully")) {
+                                System.out.println("Assignment submitted successfully");
+                            } else {
+                                System.out.println(submission_confirmation);
+                                System.out.println("Could not submit assignment");
+                            }
                             break;
 
                         case "3":

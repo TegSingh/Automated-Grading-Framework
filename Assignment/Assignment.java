@@ -142,6 +142,7 @@ public class Assignment {
             String question_string = question_to_string(question, mcq);
             assignment_to_string += question_string;
             assignment_to_string += "\n";
+
         }
 
         assignment_to_string += "----------------------------------------";
@@ -149,4 +150,66 @@ public class Assignment {
         return assignment_to_string;
     }
 
+    public String submission_to_string() {
+        String assignment_to_string = "";
+        assignment_to_string += "----------------------------------------\nAssignment ID: ";
+        assignment_to_string += this.id;
+        assignment_to_string += "\n";
+        assignment_to_string += this.course_code;
+        assignment_to_string += "\n";
+        assignment_to_string += "----------------------------------------\n";
+
+        // Loop through all questions in the assignment
+        for (int i = 0; i < this.questions.size(); i++) {
+            assignment_to_string += "\n";
+            assignment_to_string += "QUESTION ";
+            assignment_to_string += Integer.toString(i + 1);
+            assignment_to_string += ": ";
+            String question = this.questions.get(i);
+            String[] mcq = this.choices.get(i);
+            String question_string = question_to_string(question, mcq);
+            assignment_to_string += question_string;
+            assignment_to_string += "\nANSWER: ";
+            assignment_to_string += student_answers.get(i);
+            assignment_to_string += "\n";
+
+        }
+
+        assignment_to_string += "----------------------------------------";
+
+        return assignment_to_string;
+    }
+
+    public String toString() {
+        String assignment_to_string = "";
+        assignment_to_string += "----------------------------------------\nAssignment ID: ";
+        assignment_to_string += this.id;
+        assignment_to_string += "\n";
+        assignment_to_string += this.course_code;
+        assignment_to_string += "\n";
+        assignment_to_string += "----------------------------------------\n";
+
+        // Loop through all questions in the assignment
+        for (int i = 0; i < this.questions.size(); i++) {
+            assignment_to_string += "\n";
+            assignment_to_string += "QUESTION ";
+            assignment_to_string += Integer.toString(i + 1);
+            assignment_to_string += ": ";
+            String question = this.questions.get(i);
+            String[] mcq = this.choices.get(i);
+            String question_string = question_to_string(question, mcq);
+            assignment_to_string += question_string;
+            assignment_to_string += "\nThe correct option is: ";
+            assignment_to_string += this.instructor_answers.get(i);
+            assignment_to_string += "\n";
+            assignment_to_string += "ANSWER: ";
+            assignment_to_string += student_answers.get(i);
+            assignment_to_string += "\n";
+
+        }
+
+        assignment_to_string += "----------------------------------------";
+
+        return assignment_to_string;
+    }
 }
