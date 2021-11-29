@@ -319,7 +319,7 @@ public class Client {
 
                         // Execute when the instructor chosen to review submissions
                         case "2":
-                            System.out.println("Instructor chose to review submissions for the assignment");
+                            System.out.println("Instructor chose to Manually review submissions for the assignment");
                             out.println("Review submissions");
                             break;
 
@@ -342,15 +342,6 @@ public class Client {
         }
     }
 
-    // Method to manage user login
-    public static String[] handle_login() {
-        String[] login_credentials = new String[2];
-        Scanner sc = new Scanner(System.in);
-
-        sc.close();
-        return login_credentials;
-    }
-
     // Method to display the student menu
     public static void display_student_menu() {
         System.out.println("----------------------------------------");
@@ -369,7 +360,7 @@ public class Client {
         System.out.println("----------------------------------------");
         System.out.println("Make a selection");
         System.out.println("1. Post an assignment");
-        System.out.println("2. Review submissions");
+        System.out.println("2. Manually Review submissions");
         System.out.println("3. Log out");
         System.out.println("Enter exit to terminate process");
         System.out.println("----------------------------------------");

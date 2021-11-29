@@ -533,6 +533,21 @@ public class Server {
                                             complete_submission.set_student_submissions(student_submissions);
                                         }
                                     }
+
+                                    // Add the new assignment to the list of the submitteed assignmnets by student
+                                    for (Student student : students) {
+                                        if (student.get_id() == logged_in_student.get_id()) {
+                                            ArrayList<Integer> submitted_assignments = student
+                                                    .get_submitted_assignments();
+                                            submitted_assignments.add(complete_submission.get_id());
+                                            student.set_submitted_assignmets(submitted_assignments);
+                                            System.out.println(
+                                                    "Assignments submitted by student " + logged_in_student.get_id()
+                                                            + ": " + submitted_assignments.toString());
+                                            break;
+                                        }
+                                    }
+
                                     System.out.println(complete_submission.get_student_submissions().toString());
 
                                 } else {
@@ -590,7 +605,21 @@ public class Server {
                                 }
 
                                 // Decode the assignment and add it to list
-                                assignments.add(assignmentHelper.decode_assignment(assignment_lines));
+                                Assignment posted_assignment = assignmentHelper.decode_assignment(assignment_lines);
+                                assignments.add(posted_assignment);
+
+                                // Add the assignment to the list of posted assignments by the instructor
+                                for (Instructor instructor : instructors) {
+                                    if (instructor.get_id() == logged_in_instructor.get_id()) {
+                                        ArrayList<Integer> posted_assignments = instructor.get_posted_assignments();
+                                        posted_assignments.add(posted_assignment.get_id());
+                                        instructor.set_posted_assignments(posted_assignments);
+                                        System.out.println("Posted Assignments by Instructor "
+                                                + logged_in_instructor.get_id() + ": " + posted_assignments.toString());
+                                        break;
+                                    }
+                                }
+
                                 System.out.println("Total Assignments: " + assignments.size());
                                 break;
 
@@ -598,7 +627,13 @@ public class Server {
                             case "Review submissions":
                                 System.out.println("Instructor " + logged_in_instructor.get_id()
                                         + ": Requested to review student submissions");
-                                // GET STORED FILE BASED ON STUDENT ID
+
+                                break;
+
+                            // Instructor requested to post grades for student
+                            case "Post grades":
+                                System.out.println(
+                                        "Instructor " + logged_in_instructor.get_id() + ": Requested to post grades");
                                 break;
 
                             // Instructor or Student request Log out

@@ -17,7 +17,8 @@ public class AutomatedGrading {
     public boolean write_assignment_to_file(Assignment assignment, int student_id) {
         System.out.println("Write Assignment to file method called from Automated Grading");
 
-        String filename = assignment.get_course_code() + "_" + Integer.toString(student_id) + ".txt";
+        String filename = assignment.get_course_code() + "-" + assignment.get_id() + "_" + Integer.toString(student_id)
+                + ".txt";
         String complete_path = "C:\\Users\\tegve\\Automated-Grading-Framework\\Server\\Submissions\\" + filename;
 
         // Create the file

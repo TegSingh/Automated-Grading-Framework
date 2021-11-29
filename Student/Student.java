@@ -1,5 +1,7 @@
 package Student;
 
+import java.util.ArrayList;
+
 public class Student {
 
     // Define the class variables
@@ -9,6 +11,7 @@ public class Student {
     double grade;
     int instructor_id;
     boolean logged_in;
+    ArrayList<Integer> submitted_assignments = new ArrayList<>();
 
     // Define the constructor
     public Student(int id, String password, String name, double grade, int instructor_id, boolean logged_in) {
@@ -67,6 +70,14 @@ public class Student {
 
     public void set_logged_in(boolean logged_in) {
         this.logged_in = logged_in;
+    }
+
+    public ArrayList<Integer> get_submitted_assignments() {
+        return this.submitted_assignments;
+    }
+
+    public void set_submitted_assignmets(ArrayList<Integer> submitted_assignments) {
+        this.submitted_assignments = submitted_assignments;
     }
 
     // Set the to string method

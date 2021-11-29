@@ -1,5 +1,7 @@
 package Instructor;
 
+import java.util.ArrayList;
+
 public class Instructor {
 
     // Define the class variables
@@ -8,6 +10,7 @@ public class Instructor {
     String name;
     String course_code;
     boolean logged_in;
+    ArrayList<Integer> posted_assignments = new ArrayList<>();
 
     // Define the constructor
     public Instructor(int id, String password, String name, String course_code, boolean logged_in) {
@@ -57,6 +60,14 @@ public class Instructor {
 
     public void set_logged_in(boolean logged_in) {
         this.logged_in = logged_in;
+    }
+
+    public ArrayList<Integer> get_posted_assignments() {
+        return this.posted_assignments;
+    }
+
+    public void set_posted_assignments(ArrayList<Integer> posted_assignments) {
+        this.posted_assignments = posted_assignments;
     }
 
     public String toString() {
