@@ -101,11 +101,13 @@ public class AssignmentHelper {
     }
 
     // Method to get pending assignments for a particular student
-    public ArrayList<Integer> get_course_assignments(ArrayList<Assignment> assignments, String course_code) {
+    public ArrayList<Integer> get_course_assignments(ArrayList<Assignment> assignments, String course_code,
+            int student_id) {
         System.out.println("Server: Total Assignments: " + assignments.size());
         ArrayList<Integer> pending_assignments = new ArrayList<>();
         for (Assignment assignment : assignments) {
-            if (assignment.get_course_code().equals(course_code)) {
+            if (assignment.get_course_code().equals(course_code) && !assignment.get_student_submissions()
+                    .contains(student_id)) {
                 pending_assignments.add(assignment.get_id());
             }
         }

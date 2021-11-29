@@ -28,3 +28,9 @@ java -cp output Client.Client
 ```
 
 ## User Instructions:
+
+1. Make sure to specify the absolute path as the string in the AutomatedGrading.java. This prevents some vulnerabilities related to security but on the downside the enduser has to specify the path for the class. In AutomatedGrading.java, change up the line as follows:
+
+```java
+String complete_path = "path:\\to\\main\\repo\\Server\\Submission" + filename;
+```

@@ -445,7 +445,8 @@ public class Server {
                                         .get_course_assignments(
                                                 assignments,
                                                 find_instructor_in_string(logged_in_student.get_instructor_id())
-                                                        .get_course_code());
+                                                        .get_course_code(),
+                                                logged_in_student.get_id());
 
                                 if (pending_assignments_to_submit.size() == 0) {
                                     System.out.println("No assignments to submit");
@@ -453,6 +454,7 @@ public class Server {
                                     break;
                                 } else {
                                     out.println(pending_assignments_to_submit.size());
+
                                 }
 
                                 for (Integer pending_assignment_id : pending_assignments_to_submit) {
@@ -518,6 +520,10 @@ public class Server {
                                 if (complete_submission.get_id() != 0) {
                                     System.out.println(complete_submission.toString());
                                     out.println("Submitted successfully");
+
+                                    // Write submission to a file
+                                    auto_grader.write_assignment_to_file(complete_submission,
+                                            logged_in_student.get_id());
                                     ArrayList<Integer> student_submissions = new ArrayList<>();
                                     for (Assignment test_assignment : assignments) {
                                         if (test_assignment.get_id() == complete_submission.get_id()) {
@@ -550,7 +556,8 @@ public class Server {
                                 System.out.println(course_code_pending);
 
                                 ArrayList<Integer> pending_assignments = assignmentHelper
-                                        .get_course_assignments(assignments, course_code_pending);
+                                        .get_course_assignments(assignments, course_code_pending,
+                                                logged_in_student.get_id());
                                 out.println(pending_assignments.size());
                                 for (Integer pending_assignment_id : pending_assignments) {
                                     System.out.println(pending_assignment_id);
