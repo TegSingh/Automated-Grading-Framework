@@ -41,6 +41,7 @@ public class Server {
         private static ArrayList<Assignment> assignments = new ArrayList<>();
         Student logged_in_student = null;
         Instructor logged_in_instructor = null;
+        AutomatedGrading auto_grader = new AutomatedGrading();
 
         // Fetch data from student file and store into arraylist
         public ArrayList<Student> read_student_list_file() {
@@ -517,11 +518,25 @@ public class Server {
                                 if (complete_submission.get_id() != 0) {
                                     System.out.println(complete_submission.toString());
                                     out.println("Submitted successfully");
+                                    ArrayList<Integer> student_submissions = new ArrayList<>();
+                                    for (Assignment test_assignment : assignments) {
+                                        if (test_assignment.get_id() == complete_submission.get_id()) {
+                                            student_submissions = test_assignment.get_student_submissions();
+                                            student_submissions.add(logged_in_student.get_id());
+                                            test_assignment.set_student_submissions(student_submissions);
+                                            complete_submission.set_student_submissions(student_submissions);
+                                        }
+                                    }
+                                    System.out.println(complete_submission.get_student_submissions().toString());
+
                                 } else {
                                     System.out.println(complete_submission.toString());
                                     out.println("Could not submit assignment");
                                 }
 
+                                // Calculate grades automatically and return to student
+                                float assignment = auto_grader.return_grades(complete_submission);
+                                out.println(Float.toString(assignment));
                                 break;
 
                             // Student requested a list a pending assignment
@@ -576,6 +591,7 @@ public class Server {
                             case "Review submissions":
                                 System.out.println("Instructor " + logged_in_instructor.get_id()
                                         + ": Requested to review student submissions");
+                                // GET STORED FILE BASED ON STUDENT ID
                                 break;
 
                             // Instructor or Student request Log out

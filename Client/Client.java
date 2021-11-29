@@ -194,10 +194,14 @@ public class Client {
                             // Check if the assignment was submitted successfully
                             if (submission_confirmation.equals("Submitted successfully")) {
                                 System.out.println("Assignment submitted successfully");
+                                System.out.println("Final Grade: " + in.readLine());
+                                System.out.println(
+                                        "NOTE: This is an automatically generated grade. The instructor will manually review your results if required");
                             } else {
                                 System.out.println(submission_confirmation);
                                 System.out.println("Could not submit assignment");
                             }
+
                             break;
 
                         case "3":

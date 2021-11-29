@@ -11,6 +11,7 @@ public class Assignment {
     ArrayList<String> student_answers = new ArrayList<>();
     ArrayList<String[]> choices = new ArrayList<String[]>();
     String course_code;
+    ArrayList<Integer> student_submissions = new ArrayList<>();
 
     // Define the default constructor
     public Assignment() {
@@ -79,6 +80,14 @@ public class Assignment {
 
     public void set_course_code(String course_code) {
         this.course_code = course_code;
+    }
+
+    public ArrayList<Integer> get_student_submissions() {
+        return this.student_submissions;
+    }
+
+    public void set_student_submissions(ArrayList<Integer> student_submissions) {
+        this.student_submissions = student_submissions;
     }
 
     // Method to return the Question as a string with the associated choices
