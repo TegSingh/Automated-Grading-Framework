@@ -41,6 +41,8 @@ public class Server {
         private static ArrayList<Assignment> assignments = new ArrayList<>();
         Student logged_in_student = null;
         Instructor logged_in_instructor = null;
+        ArrayList<Integer> posted_assignments = new ArrayList<>();
+        ArrayList<Integer> submitted_assignments = new ArrayList<>();
         AutomatedGrading auto_grader = new AutomatedGrading();
 
         // Fetch data from student file and store into arraylist
@@ -535,19 +537,16 @@ public class Server {
                                     }
 
                                     // Add the new assignment to the list of the submitteed assignmnets by student
+                                    submitted_assignments.add(complete_submission.get_id());
+                                    System.out.println("Assignments submitted by: " + logged_in_student.get_id()
+                                            + submitted_assignments.toString());
+
+                                    // Set value so it holds even when the client has logged out
                                     for (Student student : students) {
-                                        if (student.get_id() == logged_in_student.get_id()) {
-                                            ArrayList<Integer> submitted_assignments = student
-                                                    .get_submitted_assignments();
-                                            submitted_assignments.add(complete_submission.get_id());
+                                        if (logged_in_student.get_id() == student.get_id()) {
                                             student.set_submitted_assignmets(submitted_assignments);
-                                            System.out.println(
-                                                    "Assignments submitted by student " + logged_in_student.get_id()
-                                                            + ": " + submitted_assignments.toString());
-                                            break;
                                         }
                                     }
-
                                     System.out.println(complete_submission.get_student_submissions().toString());
 
                                 } else {
@@ -609,17 +608,15 @@ public class Server {
                                 assignments.add(posted_assignment);
 
                                 // Add the assignment to the list of posted assignments by the instructor
+                                posted_assignments.add(posted_assignment.get_id());
+                                System.out.println("Assignments posted by: " + logged_in_instructor.get_id() + ": "
+                                        + posted_assignments.toString());
+
                                 for (Instructor instructor : instructors) {
-                                    if (instructor.get_id() == logged_in_instructor.get_id()) {
-                                        ArrayList<Integer> posted_assignments = instructor.get_posted_assignments();
-                                        posted_assignments.add(posted_assignment.get_id());
+                                    if (logged_in_instructor.get_id() == instructor.get_id()) {
                                         instructor.set_posted_assignments(posted_assignments);
-                                        System.out.println("Posted Assignments by Instructor "
-                                                + logged_in_instructor.get_id() + ": " + posted_assignments.toString());
-                                        break;
                                     }
                                 }
-
                                 System.out.println("Total Assignments: " + assignments.size());
                                 break;
 
@@ -627,6 +624,43 @@ public class Server {
                             case "Review submissions":
                                 System.out.println("Instructor " + logged_in_instructor.get_id()
                                         + ": Requested to review student submissions");
+
+                                // Send the list of posted assignments
+                                out.println(posted_assignments.size());
+                                for (Integer posted_assignment_id : posted_assignments) {
+                                    out.println("Assignment ID:     " + posted_assignment_id);
+                                }
+                                String instructor_course = logged_in_instructor.get_course_code();
+                                String submission_request_id = in.readLine();
+                                System.out.println("Instructor " + logged_in_instructor.get_id()
+                                        + ": Requested submissions for assignment ID: " + submission_request_id);
+
+                                // your directory
+                                String localDir = System.getProperty("user.dir");
+                                System.out.println(localDir);
+                                localDir += "\\Server\\Submissions";
+                                System.out.println(localDir);
+
+                                File f = new File(localDir);
+                                File[] matchingFiles = f.listFiles(new FilenameFilter() {
+                                    public boolean accept(File dir, String name) {
+                                        return name.startsWith(instructor_course + "-" + submission_request_id)
+                                                && name.endsWith("txt");
+                                    }
+                                });
+
+                                System.out.println("Server: Sending the following files to the instructor");
+                                out.println(matchingFiles.length);
+                                for (File file : matchingFiles) {
+                                    System.out.println(file);
+                                    out.println(file);
+                                    String[] file_data = auto_grader.file_to_string(file).split("\n");
+                                    out.println(file_data.length);
+                                    System.out.println(file_data);
+                                    for (String file_text : file_data) {
+                                        out.println(file_text);
+                                    }
+                                }
 
                                 break;
 

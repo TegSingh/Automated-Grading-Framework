@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import Assignment.Assignment;
 
@@ -19,11 +21,13 @@ public class AutomatedGrading {
 
         String filename = assignment.get_course_code() + "-" + assignment.get_id() + "_" + Integer.toString(student_id)
                 + ".txt";
-        String complete_path = "C:\\Users\\tegve\\Automated-Grading-Framework\\Server\\Submissions\\" + filename;
+        String localDir = System.getProperty("user.dir");
+        String complete_path = localDir + "\\Server\\Submissions\\" + filename;
 
         // Create the file
         try {
             FileOutputStream file = new FileOutputStream(complete_path);
+            file.close();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Could not create file");
@@ -45,6 +49,18 @@ public class AutomatedGrading {
         }
 
         return false;
+    }
+
+    // Method to return string based by reading the file
+    public String file_to_string(File file) {
+        String file_data = "";
+        try {
+            file_data = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+        } catch (IOException e) {
+            System.out.println("Cannot read file");
+            e.printStackTrace();
+        }
+        return file_data;
     }
 
     // Method to get students final grade

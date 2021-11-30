@@ -321,6 +321,39 @@ public class Client {
                         case "2":
                             System.out.println("Instructor chose to Manually review submissions for the assignment");
                             out.println("Review submissions");
+
+                            String num_posted_string = in.readLine();
+                            for (int i = 0; i < Integer.parseInt(num_posted_string); i++) {
+                                System.out.println(in.readLine());
+                            }
+                            System.out.println("Enter the assignment you want to get submissions for: ");
+                            String requested_assignment = scanner.nextLine();
+                            out.println(requested_assignment);
+                            System.out.println("Downloading submissions....");
+
+                            int num_files = Integer.parseInt(in.readLine());
+                            for (int i = 0; i < num_files; i++) {
+
+                                String filepath = in.readLine();
+                                String filename = filepath.substring(filepath.length() - 22, filepath.length());
+                                System.out.println(filename);
+                                String localDir = System.getProperty("user.dir");
+                                localDir += "\\Client\\Submissions\\";
+                                localDir += filename;
+                                int file_line_num = Integer.parseInt(in.readLine());
+                                FileOutputStream submission_file = new FileOutputStream(localDir);
+                                submission_file.close();
+                                FileWriter submission_file_writer = new FileWriter(localDir);
+
+                                // Write to the new file line by line
+                                for (int j = 0; j < file_line_num; j++) {
+                                    String submission_file_data = in.readLine();
+                                    System.out.println(submission_file_data);
+                                    submission_file_writer.write(submission_file_data);
+                                    submission_file_writer.write("\n");
+                                }
+                                submission_file_writer.close();
+                            }
                             break;
 
                         // Instructor chose to log out and exit

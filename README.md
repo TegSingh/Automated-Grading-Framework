@@ -29,8 +29,7 @@ java -cp output Client.Client
 
 ## User Instructions:
 
-1. Make sure to specify the absolute path as the string in the AutomatedGrading.java. This prevents some vulnerabilities related to security but on the downside the enduser has to specify the path for the class. In AutomatedGrading.java, change up the line as follows:
-
-```java
-String complete_path = "path:\\to\\main\\repo\\Server\\Submission" + filename;
-```
+1. Login using the ID given in instructor_list and student_list provided in the Server directory
+2. Make sure to provide correct inputs. The code handles exceptions but wrong inputs changes the flow of control
+3. All assignment files are stored inside the submissions directory for both Server and Client(if client is an instructor)
+4. Logging out will lead to loss of information like posted assignments
