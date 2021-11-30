@@ -12,6 +12,7 @@ public class Student {
     int instructor_id;
     boolean logged_in;
     ArrayList<Integer> submitted_assignments = new ArrayList<>();
+    ArrayList<Float> assignment_grades = new ArrayList<>();
 
     // Define the constructor
     public Student(int id, String password, String name, double grade, int instructor_id, boolean logged_in) {
@@ -78,6 +79,14 @@ public class Student {
 
     public void set_submitted_assignmets(ArrayList<Integer> submitted_assignments) {
         this.submitted_assignments = submitted_assignments;
+    }
+
+    public ArrayList<Float> get_assignment_grades() {
+        return this.assignment_grades;
+    }
+
+    public void set_assignmet_grades(ArrayList<Float> assignment_grades) {
+        this.assignment_grades = assignment_grades;
     }
 
     // Set the to string method

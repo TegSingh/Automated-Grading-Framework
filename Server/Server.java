@@ -43,6 +43,7 @@ public class Server {
         Instructor logged_in_instructor = null;
         ArrayList<Integer> posted_assignments = new ArrayList<>();
         ArrayList<Integer> submitted_assignments = new ArrayList<>();
+        ArrayList<Float> assignment_grades = new ArrayList<>();
         AutomatedGrading auto_grader = new AutomatedGrading();
 
         // Fetch data from student file and store into arraylist
@@ -538,7 +539,7 @@ public class Server {
 
                                     // Add the new assignment to the list of the submitteed assignmnets by student
                                     submitted_assignments.add(complete_submission.get_id());
-                                    System.out.println("Assignments submitted by: " + logged_in_student.get_id()
+                                    System.out.println("Assignments submitted by: " + logged_in_student.get_id() + ": "
                                             + submitted_assignments.toString());
 
                                     // Set value so it holds even when the client has logged out
@@ -555,8 +556,15 @@ public class Server {
                                 }
 
                                 // Calculate grades automatically and return to student
-                                float assignment = auto_grader.return_grades(complete_submission);
-                                out.println(Float.toString(assignment));
+                                float assignment_grade = auto_grader.return_grades(complete_submission);
+                                assignment_grades.add(assignment_grade);
+                                // Set value so it holds even when the client has logged out
+                                for (Student student : students) {
+                                    if (logged_in_student.get_id() == student.get_id()) {
+                                        student.set_assignmet_grades(assignment_grades);
+                                    }
+                                }
+                                out.println(Float.toString(assignment_grade));
                                 break;
 
                             // Student requested a list a pending assignment
@@ -668,6 +676,75 @@ public class Server {
                             case "Post grades":
                                 System.out.println(
                                         "Instructor " + logged_in_instructor.get_id() + ": Requested to post grades");
+
+                                // Send the list of posted assignments
+                                out.println(posted_assignments.size());
+                                for (Integer posted_assignment_id : posted_assignments) {
+                                    out.println("Assignment ID:     " + posted_assignment_id);
+                                }
+
+                                int requested_assignment_id = Integer.parseInt(in.readLine());
+                                System.out.println(requested_assignment_id);
+                                boolean submission_found = false;
+                                ArrayList<Integer> submissions_to_grade = new ArrayList<>();
+                                // find the assignment in the list of assignments
+                                for (Assignment assignment_request : assignments) {
+                                    System.out.println(assignment_request.get_student_submissions().toString());
+                                    if (assignment_request.get_id() == requested_assignment_id
+                                            && assignment_request.get_student_submissions().size() > 0) {
+                                        submission_found = true;
+                                        submissions_to_grade = assignment_request.get_student_submissions();
+                                    }
+                                }
+
+                                // Send appropriate messages based on submissions
+                                if (submission_found) {
+                                    System.out.println(
+                                            "Server: Submissions found for assigment: " + requested_assignment_id);
+                                    out.println(submissions_to_grade.toString());
+                                } else {
+                                    System.out.println("Server: No submissions yet");
+                                    out.println("No submissions yet");
+                                    break;
+                                }
+
+                                String updated_grade = in.readLine();
+                                System.out.println(updated_grade);
+                                String[] grade_update = updated_grade.split(",");
+                                int student_grade_update = Integer.parseInt(grade_update[0]);
+                                float grade_grade_update = Float.parseFloat(grade_update[1]);
+
+                                // Create a list of updated grades then update the respective student object
+                                ArrayList<Float> update_grade_list = new ArrayList<>();
+                                for (Student student_grade_updates : students) {
+                                    if (student_grade_updates.get_id() == student_grade_update) {
+                                        for (int i = 0; i < student_grade_updates.get_submitted_assignments()
+                                                .size(); i++) {
+                                            if (student_grade_updates.get_submitted_assignments()
+                                                    .get(i) == requested_assignment_id) {
+                                                update_grade_list.add(grade_grade_update);
+                                            } else {
+                                                update_grade_list
+                                                        .add(student_grade_updates.get_assignment_grades().get(i));
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Print updated student grades
+                                for (Student student_grade_updates : students) {
+                                    if (student_grade_updates.get_id() == student_grade_update) {
+                                        student_grade_updates.set_assignmet_grades(update_grade_list);
+                                        for (int i = 0; i < student_grade_updates.get_submitted_assignments()
+                                                .size(); i++) {
+                                            System.out.println("Assignment ID: "
+                                                    + student_grade_updates.get_submitted_assignments().get(i)
+                                                    + " Grade: "
+                                                    + student_grade_updates.get_assignment_grades().get(i));
+                                        }
+                                    }
+                                }
+
                                 break;
 
                             // Instructor or Student request Log out

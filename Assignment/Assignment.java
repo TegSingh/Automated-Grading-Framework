@@ -11,7 +11,8 @@ public class Assignment {
     ArrayList<String> student_answers = new ArrayList<>();
     ArrayList<String[]> choices = new ArrayList<String[]>();
     String course_code;
-    ArrayList<Integer> student_submissions = new ArrayList<>();
+    ArrayList<Integer> student_submissions = new ArrayList<>(); // List containing the students that have submitted a
+                                                                // particular assignment
 
     // Define the default constructor
     public Assignment() {

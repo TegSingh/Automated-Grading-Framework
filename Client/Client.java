@@ -358,7 +358,79 @@ public class Client {
 
                         // Instructor chose to log out and exit
                         case "3":
-                            System.out.println("Instructor chose to log out and exit");
+                            System.out.println("Instructor chose to Post Grades");
+                            out.println("Post grades");
+
+                            int num_assignments = Integer.parseInt(in.readLine());
+                            for (int i = 0; i < num_assignments; i++) {
+                                System.out.println(in.readLine());
+                            }
+
+                            // Get the assignment value to grade
+                            System.out.println("Chose Assignment to grade: ");
+                            String id_string = scanner.nextLine();
+                            while (!id_string.matches("[0-9]+")) {
+                                System.out.println("Invalid Assignment input try again");
+                                System.out.println("Chose Assignment to grade: ");
+                                id_string = scanner.nextLine();
+                                if (id_string.equalsIgnoreCase("exit")) {
+                                    break;
+                                }
+                            }
+
+                            if (id_string.equalsIgnoreCase("exit")) {
+                                break;
+                            }
+
+                            out.println(id_string);
+                            String submission_available = in.readLine();
+                            if (submission_available.equals("No submissions yet")) {
+                                System.out.println("No submissions have been made for this assignment yet");
+                                break;
+                            } else {
+                                System.out.println("Following is the students who submitted the assignment");
+                                System.out.println(submission_available);
+                            }
+
+                            boolean chosen_student = false;
+                            System.out.println("Enter ID of student to grade: ");
+                            String chosen_student_id = scanner.nextLine();
+                            while (!chosen_student) {
+                                if (submission_available.contains(chosen_student_id)) {
+                                    chosen_student = true;
+                                } else {
+                                    System.out.println("Chose a valid student from: " + submission_available);
+                                    chosen_student_id = scanner.nextLine();
+                                }
+                            }
+
+                            String grade_string = "";
+                            Float grade = (float) 0;
+                            boolean grade_entered = false;
+                            if (chosen_student) {
+                                System.out.println("Student chosen successfully. Enter Grade: ");
+                                grade_string = scanner.nextLine();
+                                while (!grade_entered) {
+                                    try {
+                                        grade = Float.parseFloat(grade_string);
+                                        grade_entered = true;
+                                    } catch (Exception e) {
+                                        System.out.println("Wrong float format try again! Enter grade ");
+                                        grade_string = scanner.nextLine();
+                                    }
+                                }
+                                System.out.println("Sending grade.....");
+
+                            } else {
+                                System.out.println("No such student available");
+                                break;
+                            }
+
+                            out.println(chosen_student_id + "," + grade);
+                            System.out.println("Grade updated");
+                            continue;
+                        case "4":
+                            System.out.println("Instructor chose to log out");
                             out.println("Log out");
                             return;
                         default:
@@ -394,7 +466,8 @@ public class Client {
         System.out.println("Make a selection");
         System.out.println("1. Post an assignment");
         System.out.println("2. Manually Review submissions");
-        System.out.println("3. Log out");
+        System.out.println("3. Post Grades");
+        System.out.println("4. Log out");
         System.out.println("Enter exit to terminate process");
         System.out.println("----------------------------------------");
         System.out.println("Enter Choice: ");
