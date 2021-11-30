@@ -589,6 +589,27 @@ public class Server {
                                 }
                                 break;
 
+                            case "Check grades":
+                                System.out.println(
+                                        "Student " + logged_in_student.get_id() + ": Requested to check their grades");
+                                out.println(logged_in_student.get_submitted_assignments().size());
+                                if (logged_in_student.get_submitted_assignments().size() == 0) {
+                                    System.out.println(
+                                            "Server: No grades posted for Student ID: " + logged_in_student.get_id());
+                                }
+
+                                for (Student student_check_grades : students) {
+                                    if (student_check_grades.get_id() == logged_in_student.get_id()) {
+                                        for (int i = 0; i < student_check_grades.get_submitted_assignments()
+                                                .size(); i++) {
+                                            out.println("Assignment ID: "
+                                                    + student_check_grades.get_submitted_assignments().get(i)
+                                                    + " Grade: "
+                                                    + student_check_grades.get_assignment_grades().get(i));
+                                        }
+                                    }
+                                }
+                                break;
                             // Instructor request posting assignment
                             case "Post assignment":
                                 System.out.println("Instructor " + logged_in_instructor.get_id()

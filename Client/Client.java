@@ -205,6 +205,22 @@ public class Client {
                             break;
 
                         case "3":
+                            System.out.println("Student chose to Check grades");
+                            out.println("Check grades");
+                            // Read the size of the list of submitted assignments
+                            int num_assignments = Integer.parseInt(in.readLine());
+                            if (num_assignments == 0) {
+                                System.out.println("No Grades posted yet");
+                                break;
+                            }
+                            // Display the student grades
+                            for (int i = 0; i < num_assignments; i++) {
+                                System.out.println(in.readLine());
+                            }
+
+                            break;
+
+                        case "4":
                             System.out.println("Student chose to log out and exit");
                             out.println("Log out");
                             return;
@@ -453,7 +469,8 @@ public class Client {
         System.out.println("Make a selection");
         System.out.println("1. Check pending assignments");
         System.out.println("2. Submit an assignment");
-        System.out.println("3. Log out");
+        System.out.println("3. Check Assignment grades");
+        System.out.println("4. Log out");
         System.out.println("Enter exit to terminate process");
         System.out.println("----------------------------------------");
         System.out.println("Enter choice: ");
